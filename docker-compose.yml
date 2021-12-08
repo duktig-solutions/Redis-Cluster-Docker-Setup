@@ -1,0 +1,66 @@
+version: "3"
+services:
+  redis_master:
+    build: ./redis_master
+    # container_name: redis_master
+    networks:
+      - redis_exchange_net
+    volumes: 
+      - redis_exchange_vol:/data
+    environment:  
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=re2020Duk_psGw
+      - REDIS_DB_FILE_PREFIX=master
+      - REDIS_MASTER_PASSWORD=re2020Duk_psGw
+  redis_slave:
+    build: ./redis_slave
+    # container_name: redis_slave
+    networks:
+      - redis_exchange_net
+    volumes: 
+      - redis_exchange_vol:/data
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=re2020Duk_psGw
+      - REDIS_MASTER_PASSWORD=re2020Duk_psGw
+      - REDIS_DB_FILE_PREFIX=slave
+      - REDIS_REPLICAOF_HOST=redis_master
+      - REDIS_REPLICAOF_PORT=6379
+  redis_sentinel:
+    # container_name: redis_sentinel
+    build: ./redis_sentinel
+    environment:
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=5000
+      - SENTINEL_QUORUM=1
+      - REDIS_MASTER_HOST=redis_master
+      - REDIS_MASTER_PORT=6379
+      - REDIS_PASSWORD=re2020Duk_psGw
+    depends_on:
+      - redis_master
+      - redis_slave
+    networks:
+      - redis_exchange_net
+  haproxy:
+    # container_name: redis_haproxy
+    build: ./redis_haproxy
+    depends_on:
+      - redis_master
+      - redis_slave
+      - redis_sentinel
+    ports:
+      - '9000:9000'
+      - '6379:6379'
+    environment:
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=password
+      - REDIS_HOSTS=redis_master,redis_slave
+      - REDIS_PASSWORD=re2020Duk_psGw
+    networks:
+      - redis_exchange_net
+
+networks:
+  redis_exchange_net:
+
+volumes: 
+  redis_exchange_vol:
