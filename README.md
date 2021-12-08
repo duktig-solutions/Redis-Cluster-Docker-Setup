@@ -6,6 +6,8 @@
 
 ![Image](./images/Screen-1.png "Schema")
 
+Intermediate data Center provides:  
+
 - Cache
 - Pub/Sub
 - Set/Get
@@ -175,9 +177,9 @@ You can do the test manually to pause/unpause redis server through
     $ docker-compose pause redis_master
     $ docker-compose unpause redis_master
 
-## Legal usage
+## Credits
 
-This software/schema is a part of **Duktig Microservices** Package developed by **Duktig Solutions LLC**
+This Installation schema is a part of **Duktig Microservices** Package developed by **Duktig Solutions LLC**
 
 **Copyright 2021 Duktig Solutions LLC**
 
